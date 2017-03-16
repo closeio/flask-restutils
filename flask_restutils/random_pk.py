@@ -13,7 +13,7 @@ def uuid_to_id(uuid_obj, prefix):
 
 
 def id_to_uuid(id_str):
-    uuid_bytes = zbase62.a2b(str(id_str[id_str.find('_')+1:]))
+    uuid_bytes = zbase62.a2b(str(id_str[id_str.find('_') + 1:]))
     return uuid.UUID(bytes=uuid_bytes)
 
 
@@ -41,7 +41,8 @@ def RandomPK(id_field):
 
 
 class RandomPKMixin(object):
-    _id = Column('id', UUID, default=lambda: str(uuid.uuid4()), primary_key=True)
+    _id = Column('id', UUID, default=lambda: str(uuid.uuid4()),
+                 primary_key=True)
     id = RandomPK('_id')
 
     @classmethod
@@ -67,7 +68,7 @@ class RandomPKMixin(object):
 
         # Generate prefix based on table name
         id_prefix = cls.__tablename__[:4]
-        for i in range(0, 4-len(id_prefix)):
+        for i in range(0, 4 - len(id_prefix)):
             id_prefix += '_'
         return id_prefix
 

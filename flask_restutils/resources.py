@@ -33,7 +33,8 @@ class ModelBasedResource(Resource):
         pk_field = getattr(self.Meta, 'pk_field', None)
         if pk_field is not None:
             pk_field_instance = getattr(self.Meta.model, pk_field)
-            return self.get_queryset().filter(pk_field_instance == pk).one_or_none()
+            return self.get_queryset().filter(pk_field_instance == pk) \
+                                      .one_or_none()
         else:
             return self.get_queryset().get(pk)
 
@@ -138,10 +139,10 @@ class ModelBasedResource(Resource):
         has_more = False
 
         query = query.offset(query_skip)
-        query = query.limit(query_limit+1)
+        query = query.limit(query_limit + 1)
         resp = query.all()
 
-        if len(resp) == query_limit+1:
+        if len(resp) == query_limit + 1:
             has_more = True
             resp = resp[:query_limit]
 

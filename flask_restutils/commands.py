@@ -17,15 +17,18 @@ def sqlcreate():
     sql = get_db()
     sql.create_all()
 
+
 def sqlreset():
     """Drops and recreates all SQL tables."""
     sql = get_db()
-    print('This will drop and recreate all SQL tables. Are you sure? [y] ', end='')
+    print('This will drop and recreate all SQL tables. Are you sure? [y] ',
+          end='')
     if input() == 'y':
         sql.drop_all()
         sql.create_all()
     else:
         print('Aborted.')
+
 
 def add_sql_commands(manager):
     """

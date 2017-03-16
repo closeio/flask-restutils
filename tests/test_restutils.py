@@ -1,15 +1,19 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy, Model
-from flask_restutils.models import VersionMixin
+from flask_sqlalchemy import SQLAlchemy
 import pytest
 from sqlalchemy import Column, Integer
 from sqlalchemy.orm.exc import StaleDataError
+
+from flask_restutils.models import VersionMixin
+
+
+TEST_DB_URL = 'sqlite:///tmp/test_restutils.db'
 
 
 class TestRestutils:
     def setup_method(self, test_method):
         app = Flask('test_app')
-        app.config['SQLALCHEMY_DATABASE_URL'] = 'sqlite:///tmp/test_restutils.db'
+        app.config['SQLALCHEMY_DATABASE_URL'] = TEST_DB_URL
         self.sql = SQLAlchemy(app)
 
     def test_version_mixin(self):
