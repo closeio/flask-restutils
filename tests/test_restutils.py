@@ -26,7 +26,7 @@ class TestRestutils:
         sql.session.add(v)
         sql.session.commit()
 
-        other_session = sql.create_session({})
+        other_session = sql.create_scoped_session()
 
         v.value = 3
 
