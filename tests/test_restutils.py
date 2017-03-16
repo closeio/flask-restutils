@@ -10,14 +10,16 @@ class TestRestutils:
     def setup_method(self, test_method):
         app = Flask('test_app')
         app.config['SQLALCHEMY_DATABASE_URL'] = 'sqlite:///tmp/test_restutils.db'
-        self.sql = sql = SQLAlchemy(app)
+        self.sql = SQLAlchemy(app)
 
     def test_version_mixin(self):
         sql = self.sql
+
         class VersionTest(sql.Model, VersionMixin):
             __tablename__ = 'version_test'
             id = Column(Integer, primary_key=True)
             value = Column(Integer)
+
         sql.create_all()
 
         v = VersionTest(value=1)

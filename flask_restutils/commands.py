@@ -7,9 +7,9 @@ __all__ = ['add_sql_commands']
 
 
 try:
-   input = raw_input # Python 2
+    input = raw_input # Python 2
 except NameError:
-   pass
+    pass
 
 
 def sqlcreate():

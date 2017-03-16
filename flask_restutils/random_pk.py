@@ -31,10 +31,12 @@ def RandomPK(id_field):
         value = getattr(self, id_field)
         if value:
             return uuid_to_id(uuid.UUID(value), self.get_id_prefix())
+
     def attr(cls):
         return synonym(id_field,
                        descriptor=property(getter),
                        comparator_factory=RandomPKComparator)
+
     return declared_attr(attr)
 
 
