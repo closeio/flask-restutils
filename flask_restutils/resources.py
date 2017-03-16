@@ -70,7 +70,7 @@ class ModelBasedResource(Resource):
         schema = Schema(raw_data=self.raw_data)
         try:
             data = schema.full_clean()
-        except ValidationError as e:
+        except ValidationError:
             abort(400, **{
                 'field-errors': schema.field_errors,
                 'errors': schema.errors,
@@ -92,7 +92,7 @@ class ModelBasedResource(Resource):
 
         try:
             data = schema.full_clean()
-        except ValidationError as e:
+        except ValidationError:
             abort(400, **{
                 'field-errors': schema.field_errors,
                 'errors': schema.errors,
