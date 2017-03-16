@@ -17,4 +17,5 @@ setup(
     packages=[
         'flask_restutils',
     ],
+    tests_require=['flask', 'flask-sqlalchemy', 'pytest'],
 )
