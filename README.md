@@ -1,5 +1,7 @@
 # flask-restutils
 
+[![CircleCI](https://circleci.com/gh/closeio/flask-restutils.svg?style=svg)](https://circleci.com/gh/closeio/flask-restutils)
+
 Helpers for building REST APIs with Flask / SQLAlchemy / flask-restful.
 
 ## Management commands (`flask_restutils.commands`)
