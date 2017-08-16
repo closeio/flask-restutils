@@ -110,6 +110,18 @@ class ModelBasedResource(Resource):
         schema = Schema(data=Schema.obj_to_dict(obj))
         return schema.serialize(), 200
 
+    def delete(self, pk):
+        obj = self.get_object(pk)
+        if obj is None:
+            abort(404)
+
+        self.delete_object(obj)
+        return {}, 200
+
+    def delete_object(self, obj):
+        self.sql.session.delete(obj)
+        self.sql.session.commit()
+
     def paginate_query(self, query):
         max_limit = getattr(self.Meta, 'max_limit', DEFAULT_MAX_LIMIT)
 
