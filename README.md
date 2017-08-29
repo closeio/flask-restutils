@@ -48,8 +48,6 @@ class Author(RandomPKMixin, sql.Model):
         id_prefix = 'author'
 ```
 
-The UUID4 representation can be accessed through the `_id` field.
-
 ## Resources (`flask_restutils.resources`)
 
 Requires `flask-restful` and `cleancat`.
