@@ -3,8 +3,7 @@ import uuid
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy.orm import synonym
-from sqlalchemy.orm.properties import ColumnProperty
+from sqlalchemy.types import TypeDecorator
 from zbase62 import zbase62
 
 
@@ -17,49 +16,34 @@ def id_to_uuid(id_str):
     return uuid.UUID(bytes=uuid_bytes)
 
 
-class RandomPKComparator(ColumnProperty.Comparator):
-    def __eq__(self, other):
+class RandomPKField(TypeDecorator):
+    impl = UUID(as_uuid=True)
+    python_type = str
+
+    def __init__(self, prefix, *args, **kwargs):
+        self.prefix = prefix
+        super(RandomPKField, self).__init__(*args, **kwargs)
+
+    def process_bind_param(self, value, dialect):
         try:
-            uuid_str = str(id_to_uuid(other))
+            return id_to_uuid(value) if value else None
         except ValueError:
-            return False
-        return self.__clause_element__() == uuid_str
+            return None
 
-
-def RandomPK(id_field):
-    def getter(self):
-        value = getattr(self, id_field)
-        if value:
-            return uuid_to_id(uuid.UUID(value), self.get_id_prefix())
-
-    def attr(cls):
-        return synonym(id_field,
-                       descriptor=property(getter),
-                       comparator_factory=RandomPKComparator)
-
-    return declared_attr(attr)
+    def process_result_value(self, value, dialect):
+        return uuid_to_id(value, self.prefix) if value else None
 
 
 class RandomPKMixin(object):
-    _id = Column('id', UUID, default=lambda: str(uuid.uuid4()),
-                 primary_key=True)
-    id = RandomPK('_id')
-
-    @classmethod
-    def get(cls, pk):
-        try:
-            internal_pk = cls.to_internal_pk(pk)
-        except ValueError:
-            return
-        return cls.query.get(internal_pk)
-
-    @classmethod
-    def to_internal_pk(cls, pk):
-        """
-        Maps a public ID value to the internal primary key.
-        Raises ValueError if an incorrect value is given.
-        """
-        return str(id_to_uuid(pk))
+    @declared_attr
+    def id(cls):
+        prefix = cls.get_id_prefix()
+        return Column(
+            'id',
+            RandomPKField(prefix),
+            default=lambda: uuid_to_id(uuid.uuid4(), prefix),
+            primary_key=True
+        )
 
     @classmethod
     def get_id_prefix(cls):
