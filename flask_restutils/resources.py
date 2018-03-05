@@ -26,8 +26,8 @@ class ModelBasedResource(Resource):
 
     def get_object(self, pk):
         """
-        Returns the objet with the given pk. If get_queryset() has a filter, or
-        if a custom PK field is used (e.g. with RandomPKMixin), an explicit
+        Returns the object with the given pk. If get_queryset() has a filter,
+        or if a custom PK field is used (e.g. with RandomPKMixin), an explicit
         pk_field must be specified in the resource's Meta class.
         """
         pk_field = getattr(self.Meta, 'pk_field', None)
