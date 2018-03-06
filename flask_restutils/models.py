@@ -11,12 +11,13 @@ class BaseModelMixin(object):
 
     @declared_attr
     def date_created(cls):
-        return Column(DateTime, default=datetime.datetime.utcnow)
+        return Column(DateTime, default=datetime.datetime.utcnow,
+                      nullable=False)
 
     @declared_attr
     def date_updated(cls):
         return Column(DateTime, default=datetime.datetime.utcnow,
-                      onupdate=datetime.datetime.utcnow)
+                      onupdate=datetime.datetime.utcnow, nullable=False)
 
     def __repr__(self):
         if getattr(self, 'id', None):
