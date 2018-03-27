@@ -116,6 +116,7 @@ class ModelBasedResource(Resource):
 
         schema = Schema(data=Schema.obj_to_dict(obj))
         return schema.serialize(), 200
+
     def delete(self, pk):
         obj = self.get_object(pk)
         if obj is None:
