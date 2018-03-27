@@ -47,6 +47,20 @@ class ModelBasedResource(Resource):
         self.sql.session.add(obj)
         self.sql.session.commit()
 
+    def update_object(self, obj, data):
+        """Set fields of the object based on the given data dict.
+
+        If any of the field values differ from what they used to be, save
+        the object.
+        """
+        dirty = False
+        for key, value in data.items():
+            if getattr(obj, key, None) != value:
+                setattr(obj, key, value)
+                dirty = True
+        if dirty:
+            self.save_object(obj)
+
     def get(self, pk=None):
         Schema = self.Meta.schema
 
@@ -98,14 +112,7 @@ class ModelBasedResource(Resource):
                 'errors': schema.errors,
             })
 
-        dirty = False
-        for key, value in data.items():
-            if getattr(obj, key, None) != value:
-                setattr(obj, key, value)
-                dirty = True
-
-        if dirty:
-            self.save_object(obj)
+        self.update_object(obj, data)
 
         schema = Schema(data=Schema.obj_to_dict(obj))
         return schema.serialize(), 200
