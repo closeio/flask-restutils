@@ -22,6 +22,11 @@ class ModelBasedResource(Resource):
         return request_json()
 
     def get_queryset(self):
+        """Return the queryset that should be used for the current request.
+
+        This method can return None instead of a queryset to indicate that
+        the queryset is empty.
+        """
         return self.Meta.model.query
 
     def get_object(self, pk):
@@ -30,17 +35,23 @@ class ModelBasedResource(Resource):
         or if a custom PK field is used (e.g. with RandomPKMixin), an explicit
         pk_field must be specified in the resource's Meta class.
         """
+        queryset = self.get_queryset()
+        if queryset is None:
+            return None
+
         pk_field = getattr(self.Meta, 'pk_field', None)
         if pk_field is not None:
             pk_field_instance = getattr(self.Meta.model, pk_field)
-            return self.get_queryset().filter(pk_field_instance == pk) \
-                                      .one_or_none()
+            return queryset.filter(pk_field_instance == pk).one_or_none()
         else:
-            return self.get_queryset().get(pk)
+            return queryset.get(pk)
 
     def get_objects(self):
-        qs = self.get_queryset()
-        objs, has_more = self.paginate_query(qs)
+        queryset = self.get_queryset()
+        if queryset is None:
+            return [], False
+
+        objs, has_more = self.paginate_query(queryset)
         return objs, has_more
 
     def save_object(self, obj):
