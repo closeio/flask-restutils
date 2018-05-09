@@ -27,7 +27,7 @@ def rollback_on_error(session):
         def wrapped(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except:
+            except Exception:
                 session.rollback()
                 raise
         return wrapped
