@@ -27,7 +27,7 @@ def rollback_on_error(session):
         def wrapped(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
-            except Exception:
+            except:  # noqa
                 session.rollback()
                 raise
         return wrapped
