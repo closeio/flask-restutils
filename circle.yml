@@ -1,7 +1,0 @@
-test:
-  pre:
-    - pip install flake8 flake8-import-order pep8-naming
-    - flake8
-  override:
-    - pyenv global 2.7.12 3.4.4 3.5.2
-    - tox
