@@ -12,3 +12,4 @@ pytest==3.0.7
 six==1.10.0
 SQLAlchemy==1.1.6
 Werkzeug==0.12.1
+-e git+ssh://git@github.com/closeio/zbase62.git@e13d2c748ccdb0cafe6465961a0c6a4111ee219f#egg=zbase62

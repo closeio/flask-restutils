@@ -15,6 +15,7 @@ defaults: &defaults
   - run:
       name: Install dependencies
       command: |
+        sudo ln -s ~/.ssh /root/.ssh
         sudo pip install --no-deps -r requirements_tests.txt
         sudo pip install flake8 flake8-import-order pep8-naming
   - run:

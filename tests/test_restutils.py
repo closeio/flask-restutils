@@ -5,6 +5,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy.orm.exc import StaleDataError
 
 from flask_restutils.models import VersionMixin
+from flask_restutils.random_pk import RandomPKMixin
 
 
 TEST_DB_URL = 'sqlite:///tmp/test_restutils.db'
@@ -50,3 +51,10 @@ class TestRestutils:
         v2 = other_session.query(VersionTest).get(v.id)
         v2.value = 2
         sql.session.commit()
+
+    def test_random_pk_generate_id(self):
+        class MyModel(RandomPKMixin):
+            class Meta:
+                id_prefix = 'mymodel'
+
+        assert MyModel.generate_id().startswith('mymodel_')

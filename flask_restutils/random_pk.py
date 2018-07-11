@@ -41,9 +41,13 @@ class RandomPKMixin(object):
         return Column(
             'id',
             RandomPKField(prefix),
-            default=lambda: uuid_to_id(uuid.uuid4(), prefix),
+            default=cls.generate_id,
             primary_key=True
         )
+
+    @classmethod
+    def generate_id(cls):
+        return uuid_to_id(uuid.uuid4(), cls.get_id_prefix())
 
     @classmethod
     def get_id_prefix(cls):
