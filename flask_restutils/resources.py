@@ -14,8 +14,11 @@ class ModelBasedResource(Resource):
         super(ModelBasedResource, self).__init__()
         self.sql = get_db()
 
-    def get_model(self):
+    def get_model_class(self):
         return self.Meta.model
+
+    def get_schema_class(self):
+        return self.Meta.schema
 
     @property
     def raw_data(self):
@@ -27,7 +30,7 @@ class ModelBasedResource(Resource):
         This method can return None instead of a queryset to indicate that
         the queryset is empty.
         """
-        return self.Meta.model.query
+        return self.get_model_class().query
 
     def get_object(self, pk):
         """
@@ -41,7 +44,7 @@ class ModelBasedResource(Resource):
 
         pk_field = getattr(self.Meta, 'pk_field', None)
         if pk_field is not None:
-            pk_field_instance = getattr(self.Meta.model, pk_field)
+            pk_field_instance = getattr(self.get_model_class(), pk_field)
             return queryset.filter(pk_field_instance == pk).one_or_none()
         else:
             return queryset.get(pk)
@@ -59,7 +62,7 @@ class ModelBasedResource(Resource):
         self.sql.session.commit()
 
     def get(self, pk=None):
-        Schema = self.Meta.schema
+        Schema = self.get_schema_class()
 
         if pk is None: # GET list
             objs, has_more = self.get_objects()
@@ -77,7 +80,7 @@ class ModelBasedResource(Resource):
             return schema.serialize(), 200
 
     def post(self):
-        Schema = self.Meta.schema
+        Schema = self.get_schema_class()
         schema = Schema(raw_data=self.raw_data)
         try:
             data = schema.full_clean()
@@ -87,7 +90,7 @@ class ModelBasedResource(Resource):
                 'errors': schema.errors,
             })
 
-        obj = self.Meta.model(**data)
+        obj = self.get_model_class()(**data)
         self.save_object(obj)
 
         schema = Schema(data=Schema.obj_to_dict(obj))
@@ -98,7 +101,7 @@ class ModelBasedResource(Resource):
         if obj is None:
             abort(404)
 
-        Schema = self.Meta.schema
+        Schema = self.get_schema_class()
         schema = Schema(raw_data=self.raw_data, data=Schema.obj_to_dict(obj))
 
         try:
