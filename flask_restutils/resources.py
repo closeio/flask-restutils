@@ -1,6 +1,7 @@
 from cleancat import ValidationError
 from flask import request
 from flask_restful import abort, Resource
+from werkzeug.exceptions import MethodNotAllowed
 
 from .helpers import get_db, request_json
 
@@ -96,7 +97,10 @@ class ModelBasedResource(Resource):
         schema = Schema(data=Schema.obj_to_dict(obj))
         return schema.serialize(), 201
 
-    def put(self, pk):
+    def put(self, pk=None):
+        if pk is None:
+            return self.bulk_put()
+
         obj = self.get_object(pk)
         if obj is None:
             abort(404)
@@ -123,6 +127,10 @@ class ModelBasedResource(Resource):
 
         schema = Schema(data=Schema.obj_to_dict(obj))
         return schema.serialize(), 200
+
+    def bulk_put(self):
+        # Override this method in a subclass if you want to support bulk PUT.
+        raise MethodNotAllowed
 
     def delete(self, pk):
         obj = self.get_object(pk)
