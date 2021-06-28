@@ -19,6 +19,7 @@ def id_to_uuid(id_str):
 class RandomPKField(TypeDecorator):
     impl = UUID(as_uuid=True)
     python_type = str
+    cache_ok = True
 
     def __init__(self, prefix, *args, **kwargs):
         self.prefix = prefix
